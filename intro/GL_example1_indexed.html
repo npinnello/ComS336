@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Example With Indexed Rendering</title>
+</head>
+
+<body> 
+	<canvas id="theCanvas" width="400" height="400">
+    Please use a browser that supports "canvas"
+    </canvas>
+
+    <script id="vertexShader" type="x-shader/x-vertex">
+    attribute vec4 a_Position;
+  	void main() {
+  		gl_Position = a_Position;
+  	}
+	</script>
+
+	<script id="fragmentShader" type="x-shader/x-fragment">
+	void main() {
+  		gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+  	}
+	</script>
+
+		<script src="../util/cs336util.js"></script>
+		<script src="GL_example1_indexed.js"></script>
+		<script>window.onload = main</script>
+</body>
+</html>

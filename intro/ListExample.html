@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>First WebGL Example</title>
+</head>
+
+<body>
+	<canvas id="theCanvas" width="400" height="400">
+    Please use a browser that supports "canvas"
+    </canvas>
+
+
+	<p>
+		<select id="myList" size="1">
+			<option>GL_POINTS</option>
+			<option>GL_LINES</option>
+			<option>GL_LINE_STRIP</option>
+			<option>GL_LINE_LOOP</option>
+			<option>GL_TRIANGLES</option>
+			<option>GL_TRIANGLE_STRIP</option>
+			<option>GL_TRIANGLE_FAN</option>
+		</select>
+
+		<script src="../util/cs336util.js"></script>
+		<script src="ListExample.js"></script>
+		<script>window.onload = main</script>
+</body>
+</html>

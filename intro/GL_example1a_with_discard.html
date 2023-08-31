@@ -1,0 +1,51 @@
+<!--  Same as GL_example1a but fragment shader is modified to discard some of
+the fragments (i.e. render nothing), based on x value of the window coordinate.
+Uses the same .js file. -->
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Shader Source In &lt;script&gt; Tags</title>
+</head>
+
+<body>
+	<canvas id="theCanvas" width="400" height="400">
+    Please use a browser that supports "canvas"
+    </canvas>
+
+
+<script id="vertexShader" type="x-shader/x-vertex">
+
+attribute vec4 a_Position;
+void main()
+{
+  gl_Position = a_Position;
+}
+</script>
+
+<script id="fragmentShader" type="x-shader/x-fragment">
+// precision declaration required to use floats
+precision mediump float;
+void main()
+{
+	if (mod(gl_FragCoord.x, 20.0) < 10.0)
+	{
+		gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+	}
+	else
+	{
+		discard;
+	}
+}
+
+</script>
+
+
+		<script src="../util/cs336util.js"></script>
+		<script src="GL_example1a_with_discard.js"></script>
+		<script>window.onload = main</script>
+</body>
+</html>
