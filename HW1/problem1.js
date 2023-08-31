@@ -26,14 +26,13 @@ void main() {
 // Raw data for some point positions - this will be a square, consisting
 // of two triangles.  We provide two values per vertex for the x and y coordinates
 // (z will be zero by default).
-var numPoints = 6;
+var numPoints = 3;
 var vertices = new Float32Array([
--0.5, -0.5,
-0.5, -0.5,
+-0.1, 0.1,
+0.5, -0.1,
 0.5, 0.5,
--0.5, -0.5,
-0.5, 0.5,
--0.5, 0.5
+
+
 ]
 );
 
@@ -71,9 +70,6 @@ function draw(shiftValue)
   // "enable" the a_position attribute
   gl.enableVertexAttribArray(positionIndex);
 
-  // associate the data in the currently bound buffer with the a_position attribute
-  // (The '2' specifies there are 2 floats per vertex in the buffer.  Don't worry about
-  // the last three args just yet.)
   gl.vertexAttribPointer(positionIndex, 2, gl.FLOAT, false, 0, 0);
 
   // we can unbind the buffer now (not really necessary when there is only one buffer)
@@ -109,7 +105,7 @@ function main() {
   vertexbuffer = createAndLoadBuffer(vertices);
 
   // specify a fill color for clearing the framebuffer
-  gl.clearColor(0.0, 0.8, 0.8, 1.0);
+  gl.clearColor(1.0, 1.0, 0.0, 1.0);
 
   // we could just call draw() once to see the result, but setting up an animation
   // loop to continually update the canvas makes it easier to experiment with the
@@ -122,7 +118,7 @@ function main() {
   // define an animation loop
   var animate = function() {
   	draw(shift);
-    if (shift < -0.2 || shift > 0.2) increment = -increment;
+    if (shift < -0.2 || shift > 0.5) increment = -increment;
     shift += increment;
 
   	// request that the browser calls animate() again "as soon as it can"
