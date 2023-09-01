@@ -8,9 +8,9 @@
 // (z will be zero by default).
 var numPoints = 3;
 var vertices = new Float32Array([
--0.5, -0.5,
-0.5, -0.5,
-0.5, 0.5,
+-0.1, -0.1,
+0.3, -0.1,
+0.1, 0.3,
 
 ]
 );
@@ -41,10 +41,7 @@ function draw(xShiftValue, yShiftValue, scale)
 
   // get the index for the a_Position attribute defined in the vertex shader
   var positionIndex = gl.getAttribLocation(shader, 'a_Position');
-  if (positionIndex < 0) {
-    console.log('Failed to get the storage location of a_Position');
-    return;
-  }
+  
 
   // "enable" the a_position attribute
   gl.enableVertexAttribArray(positionIndex);
