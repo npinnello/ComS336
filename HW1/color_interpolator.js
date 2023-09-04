@@ -23,7 +23,6 @@ function Color(r, g, b, a)
  * @param {Number} y - offset from bottom
  * @param {Number} base - base of rectangle
  * @param {Number} height - height of triangle
- * @param {Number} size
  * @param {Color[]} colors - colors of the four corners, counterclockwise
  *   from lower left
  * @return {Color} interpolated color at offset (x, y)
