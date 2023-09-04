@@ -127,6 +127,9 @@ function main () {
   const canvas = document.getElementById('theCanvas')
   canvas.setAttribute('width', size)
   canvas.setAttribute('height', size)
+  // basically this function does setup that "should" only have to be done once,
+  // while draw() does things that have to be repeated each time the canvas is
+  // redrawn
 
   // get graphics context
   gl = getGraphicsContext("theCanvas");

@@ -1,4 +1,5 @@
-
+// Same as GL_example1 but the js file moves the boilerplate
+// code into CS336util.js.
 
 // vertex shader
 const vshaderSource = `
@@ -110,12 +111,7 @@ function main() {
   // specify a fill color for clearing the framebuffer
   gl.clearColor(0.0, 0.8, 0.8, 1.0);
 
-  // we could just call draw() once to see the result, but setting up an animation
-  // loop to continually update the canvas makes it easier to experiment with the
-  // shaders
-  //draw();
 
-  // define an animation loop
   var animate = function() {
     let nextN = parseInt(document.getElementById('nBox').value);
     const nextScale = parseFloat(document.getElementById('scaleBox').value);
@@ -124,24 +120,24 @@ function main() {
       nextN > 0 && nextN !== currentN
     ) {
       if (nextN > 100) {
-        // too much will crash my computer
+   
         nextN = 100
       }
-      // re-bind the array
+ 
       const vertices = createVertices(nextN, nextScale)
 
-      // load the vertex data into GPU memory
+     
       vertexbuffer = createAndLoadBuffer(vertices);
       currentN = nextN
       console.log(currentN)
     }
     draw(currentN);
 
-    // request that the browser calls animate() again "as soon as it can"
+
     requestAnimationFrame(animate);
   };
 
-  // start drawing!
+
   animate();
 
 
