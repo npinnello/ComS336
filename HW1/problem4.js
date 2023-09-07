@@ -28,11 +28,19 @@ void main()
 
 // raw data for some point positions
 const vertices = new Float32Array([
-  -1.0, -1.0,
+  0.0, -1.0,
   1.0, -1.0,
-  -1.0, 1.0,
+  1.0, 1.0,
+
   1.0, 1.0,
 ])
+
+// const vertices2 = new Float32Array([
+//   -1.0, -1.0,
+//   1.0, -1.0,
+//   1.0, 1.0,
+//   1.0, 1.0,
+// ])
 
 // a color value for each vertex
 var colors = new Float32Array(
@@ -170,12 +178,14 @@ function main () {
   // define an animation loop
   var animate = function() {
     draw();
+    draw();
+    
 
-    // request that the browser calls animate() again "as soon as it can"
+    
     requestAnimationFrame(animate);
   };
 
-  // start drawing!
+
   animate();
 
 
