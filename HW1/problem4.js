@@ -28,11 +28,18 @@ void main()
 
 // raw data for some point positions
 const vertices = new Float32Array([
+<<<<<<< HEAD
   0.0, -1.0,
   1.0, -1.0,
   1.0, 1.0,
 
   1.0, 1.0,
+=======
+  -0.5, -0.75,
+  0.5, -0.75,
+  0.0, 1.0,
+  -0.5, 
+>>>>>>> 3cdc01b57980054674c8356ba85a3c00b574c093
 ])
 
 // const vertices2 = new Float32Array([
@@ -165,13 +172,14 @@ function main () {
       const x = event.offsetX
       const y = size - event.offsetY
       console.log(x, y)
-      const color = colorInterpolator(size, [
+      
+      const color = findRGB(size, [
         1.0, 0.0, 0.0, 1.0,    // red
         0.0, 1.0, 0.0, 1.0,    // green
         1.0, 1.0, 1.0, 1.0,    // white
         0.0, 0.0, 1.0, 1.0,    // blue
       ], x, y)
-      colorPicker.style.backgroundColor = `rgba(${color[0] * 100}%, ${color[1] * 100}%, ${color[2] * 100}%, ${color[3]})`
+      colorPicker.style.backgroundColor = `rgba(${color[1] * 100}%, ${color[1] * 100}%, ${color[2] * 100}%, ${color[3]})`
     }
   )
 
