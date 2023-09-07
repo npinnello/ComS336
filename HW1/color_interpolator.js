@@ -89,3 +89,4 @@ function findRGB(x, y, width, height, colors)
 
 
 }
+}
