@@ -25,6 +25,7 @@ function Color(r, g, b, a)
  * @param {Number} height - height of triangle
  * @param {Color[]} colors - colors of the four corners, counterclockwise
  *   from lower left
+ * @param {Number} size
  * @return {Color} interpolated color at offset (x, y)
  */
 function findRGB(x, y, width, height, colors)
@@ -66,8 +67,7 @@ function findRGB(x, y, width, height, colors)
 	  }
 	  console.assert(targetColor.length === 3)
 	  console.assert(triangle.length === 3)
-	  // then, calculate the result color
-	  // reference: https://codeplea.com/triangular-interpolation
+	  
 	  let r, g, b
 	  const w0 = 1 / distance(current, triangle[0])
 	  const w1 = 1 / distance(current, triangle[1])
