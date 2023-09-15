@@ -28,18 +28,12 @@ void main()
 
 // raw data for some point positions
 const vertices = new Float32Array([
-<<<<<<< HEAD
-  0.0, -1.0,
-  1.0, -1.0,
+  -0.5, -0.75,
+  0.5, -0.75,
   1.0, 1.0,
 
   1.0, 1.0,
-=======
-  -0.5, -0.75,
-  0.5, -0.75,
-  0.0, 1.0,
-  -0.5, 
->>>>>>> 3cdc01b57980054674c8356ba85a3c00b574c093
+  
 ])
 
 // const vertices2 = new Float32Array([
