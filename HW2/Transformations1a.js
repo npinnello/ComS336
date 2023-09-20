@@ -34,12 +34,12 @@ void main()
 `;
 
 
-// A little right triangle in the first quadrant as a test figure
+//Problem 3b implementing new coordinates for rotated triangle
 var numPoints = 3;
 var vertices = new Float32Array([
-0.2, 0.1,
-0.3, 0.3,
-0.2, 0.3,
+-0.6, 0.4,
+-0.2, 0.4,
+-0.2, .3,
 ]
 );
 
