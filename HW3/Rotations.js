@@ -10,6 +10,7 @@ attribute vec4 a_Color;
 varying vec4 color;
 void main()
 {
+    
   color = a_Color;
   gl_Position = transform * a_Position;
 }
@@ -27,56 +28,56 @@ void main()
 
 
 // Test data
-  // two triangles, yellow one at z = -1/2 and cyan one at z = 1/2
+// two triangles, yellow one at z = -1/2 and cyan one at z = 1/2
 var vertices = new Float32Array([
-.75, -.75, -0.5,
-0.0, .75, -0.5,
--.75, -.75, -0.5,
-.75, -.75, 0.5,
-0.0, .75, 0.5,
--.75, -.75, 0.5]);
+  .75, -.75, -0.5,
+  0.0, .75, -0.5,
+  -.75, -.75, -0.5,
+  .75, -.75, 0.5,
+  0.0, .75, 0.5,
+  -.75, -.75, 0.5]);
 
 var colors = new Float32Array([
-1.0, 1.0, 0.0, 1.0,  // yellow
-1.0, 1.0, 0.0, 1.0,
-1.0, 1.0, 0.0, 1.0,
-0.0, 1.0, 1.0, 1.0,  // cyan
-0.0, 1.0, 1.0, 1.0,
-0.0, 1.0, 1.0, 1.0]);
+  1.0, 1.0, 0.0, 1.0,  // yellow
+  1.0, 1.0, 0.0, 1.0,
+  1.0, 1.0, 0.0, 1.0,
+  0.0, 1.0, 1.0, 1.0,  // cyan
+  0.0, 1.0, 1.0, 1.0,
+  0.0, 1.0, 1.0, 1.0]);
 
 var linesVertices = new Float32Array([
--0.8, 0.0, 0.0,
-0.8, 0.0, 0.0,
-0.0, -0.8, 0.0,
-0.0, 0.8, 0.0,
-0.0, 0.0, -0.8,
-0.0, 0.0, 0.8]);
+  -0.8, 0.0, 0.0,
+  0.8, 0.0, 0.0,
+  0.0, -0.8, 0.0,
+  0.0, 0.8, 0.0,
+  0.0, 0.0, -0.8,
+  0.0, 0.0, 0.8]);
 
 var axisColors = new Float32Array([
 //var linesColors = new Float32Array([
-0.0, 0.0, 0.0, 1.0,
-0.0, 0.0, 0.0, 1.0,
-0.0, 0.0, 0.0, 1.0,
-0.0, 0.0, 0.0, 1.0,
-0.0, 0.0, 0.0, 1.0,
-0.0, 0.0, 0.0, 1.0]);
+  0.0, 0.0, 0.0, 1.0,
+  0.0, 0.0, 0.0, 1.0,
+  0.0, 0.0, 0.0, 1.0,
+  0.0, 0.0, 0.0, 1.0,
+  0.0, 0.0, 0.0, 1.0,
+  0.0, 0.0, 0.0, 1.0]);
 
 var axisVertices = new Float32Array([
-0.0, 0.0, 0.0,
-1.5, 0.0, 0.0,
-0.0, 0.0, 0.0,
-0.0, 1.5, 0.0,
-0.0, 0.0, 0.0,
-0.0, 0.0, 1.5]);
+  0.0, 0.0, 0.0,
+  1.5, 0.0, 0.0,
+  0.0, 0.0, 0.0,
+  0.0, 1.5, 0.0,
+  0.0, 0.0, 0.0,
+  0.0, 0.0, 1.5]);
 
 var linesColors = new Float32Array([
 //var axisColors = new Float32Array([
-1.0, 0.0, 0.0, 1.0,
-1.0, 0.0, 0.0, 1.0,
-0.0, 1.0, 0.0, 1.0,
-0.0, 1.0, 0.0, 1.0,
-0.0, 0.0, 1.0, 1.0,
-0.0, 0.0, 1.0, 1.0]);
+  1.0, 0.0, 0.0, 1.0,
+  1.0, 0.0, 0.0, 1.0,
+  0.0, 1.0, 0.0, 1.0,
+  0.0, 1.0, 0.0, 1.0,
+  0.0, 0.0, 1.0, 1.0,
+  0.0, 0.0, 1.0, 1.0]);
 
 // A few global variables...
 
@@ -96,6 +97,8 @@ var shader;
 
 // Transformation matrices.
 var model = new THREE.Matrix4();
+model.premultiply(new THREE.Matrix4().makeRotationY(toRadians(-45)))
+model.premultiply(new THREE.Matrix4().makeRotationZ(toRadians(-45)))
 
 // Set up a "view point" by translating 5 units out the z axis, rotating 45 degrees
 // cw about the x axis, and then rotating 30 ccw about the y axis.  This creates a
@@ -108,9 +111,9 @@ var cameraPitch = -45;
 function makeView()
 {
   var v = new THREE.Matrix4().makeTranslation(0, 0, -5)
-      .multiply(new THREE.Matrix4().makeRotationX(toRadians(-cameraPitch)))
-      .multiply(new THREE.Matrix4().makeRotationY(toRadians(-cameraHead)));
-      return v;
+  .multiply(new THREE.Matrix4().makeRotationX(toRadians(-cameraPitch)))
+  .multiply(new THREE.Matrix4().makeRotationY(toRadians(-cameraHead)));
+  return v;
 }
 var view = makeView();
 
@@ -139,214 +142,183 @@ var transformations = "";
 //translate keypress events to strings
 //from http://javascript.info/tutorial/keyboard-events
 function getChar(event) {
-if (event.which == null) {
- return String.fromCharCode(event.keyCode) // IE
-} else if (event.which!=0 && event.charCode!=0) {
- return String.fromCharCode(event.which)   // the rest
-} else {
- return null // special key
-}
+  if (event.which == null) {
+    return String.fromCharCode(event.keyCode) // IE
+  } else if (event.which!=0 && event.charCode!=0) {
+    return String.fromCharCode(event.which)   // the rest
+  } else {
+    return null // special key
+  }
 }
 
 //handler for key press events will update modelMatrix based
 //on key press and radio button state
 function handleKeyPress(event)
 {
-	var m = new THREE.Matrix4();
-	var ch = getChar(event);
-	var text = "I";
-	switch(ch)
-	{
+  var m = new THREE.Matrix4();
+  var ch = getChar(event);
+  var text = "I";
+  switch(ch)
+  {
     // Experiment #1:
     // This should un-do RotateX(-45)*RotateX(-45) using ZYZ order
     // for Euler angles.  Angles are approximate, more accurate
     // values (obtained analytically) are -35.264, 60.0, and 54.736
 
     case 't':
-    m.makeRotationZ(toRadians(-35))
-        .multiply(new THREE.Matrix4().makeRotationY(toRadians(60)))
-        .multiply(new THREE.Matrix4().makeRotationZ(toRadians(55)));
+      m.makeRotationZ(toRadians(-35))
+      .multiply(new THREE.Matrix4().makeRotationY(toRadians(60)))
+      .multiply(new THREE.Matrix4().makeRotationZ(toRadians(55)));
 
-    // Similar, using YZY order
-    // m.makeRotationY(toRadians(90))
-    //     .multiply(new THREE.Matrix4().makeRotationZ(toRadians(45)))
-    //     .multiply(new THREE.Matrix4().makeRotationY(toRadians(-45)));
+      // Similar, using YZY order
+      // m.makeRotationY(toRadians(90))
+      //     .multiply(new THREE.Matrix4().makeRotationZ(toRadians(45)))
+      //     .multiply(new THREE.Matrix4().makeRotationY(toRadians(-45)));
 
-    text = "T";
-    break;
+      text = "T";
+      break;
 
-// Experiment #2:
-// This should (approximately) un-do RotateY(-45)*RotateX(-45) using
-// ZYZ order for Euler angles.  Press p, then q, then r in "intrinsic" mode
-// after doing RotateY(-45)*RotateX(-45)
-  case 'p':
-  m.makeRotationZ(toRadians(-35));
-  text = "P";
-  break;
-  case 'q':
-  m.makeRotationY(toRadians(60));
-  text = "Q";
-  break;
-  case 'r':
-  m.makeRotationZ(toRadians(55));
-  text = "R";
-  break;
-
-// YZY
-  // case 'p':
-  // m.makeRotationY(toRadians(90));
-  // text = "P";
-  // break;
-  // case 'q':
-  // m.makeRotationZ(toRadians(45));
-  // text = "Q";
-  // break;
-  // case 'r':
-  // m.makeRotationY(toRadians(-45));
-  // text = "R";
-  // break;
-
-// XZX
-  // case 'p':
-  // m.makeRotationX(toRadians(-45));
-  // text = "P";
-  // break;
-  // case 'q':
-  // m.makeRotationZ(toRadians(45));
-  // text = "Q";
-  // break;
-  // case 'r':
-  // m.makeRotationX(toRadians(90));
-  // text = "R";
-  // break;
-
-// ZXZ
-  // case 'p':
-  // m.makeRotationZ(toRadians(55));
-  // text = "P";
-  // break;
-  // case 'q':
-  // m.makeRotationX(toRadians(60));
-  // text = "Q";
-  // break;
-  // case 'r':
-  // m.makeRotationZ(toRadians(-35));
-  // text = "R";
-  // break;
-
-//ZYX
-  // case 'p':
-  // m.makeRotationZ(toRadians(35));
-  // text = "P";
-  // break;
-  // case 'q':
-  // m.makeRotationY(toRadians(30));
-  // text = "Q";
-  // break;
-  // case 'r':
-  // m.makeRotationX(toRadians(55));
-  // text = "R";
-  // break;
-
-  //YXZ
-    // case 'p':
-    // m.makeRotationY(toRadians(55));
-    // text = "P";
-    // break;
-    // case 'q':
-    // m.makeRotationX(toRadians(30));
-    // text = "Q";
-    // break;
-    // case 'r':
-    // m.makeRotationZ(toRadians(35));
-    // text = "R";
-    // break;
+// My solution XZX
+//     case 'p':
+//     m.makeRotationX(toRadians(-35));
+//     text = "P";
+//     break;
+//     case 'q':
+//     m.makeRotationZ(toRadians(60));
+//     text = "Q";
+//     break;
+//     case 'r':
+//     m.makeRotationX(toRadians(55));
+//     text = "R";
+//     break;
 
 
-  case('d'):
-  cameraHead += 15;
-  view = makeView();
-  break;
-  case('D'):
-  cameraHead -= 15;
-  view = makeView();
-  break;
-  case('e'):
-  if (cameraPitch == -45)
-  {
-    cameraPitch = 0;
+// My solution XYX
+//     case 'p':
+//       m.makeRotationX(toRadians(55));
+//       text = "P";
+//       break;
+//     case 'q':
+//       m.makeRotationY(toRadians(60));
+//       text = "Q";
+//       break;
+//     case 'r':
+//       m.makeRotationX(toRadians(-35));
+//       text = "R";
+//       break;
+
+// My solution ZXY
+//     case 'p':
+//       m.makeRotationZ(toRadians(35));
+//       text = "P";
+//       break;
+//     case 'q':
+//       m.makeRotationX(toRadians(30));
+//       text = "Q";
+//       break;
+//     case 'r':
+//       m.makeRotationY(toRadians(35));
+//       text = "R";
+//       break;
+//
+// My solution XZY
+//     case 'p':
+//       m.makeRotationX(toRadians(35));
+//       text = "P";
+//       break;
+//     case 'q':
+//       m.makeRotationZ(toRadians(30));
+//       text = "Q";
+//       break;
+//     case 'r':
+//       m.makeRotationY(toRadians(55));
+//       text = "R";
+//       break;
+
+    case('d'):
+      cameraHead += 15;
+      view = makeView();
+      break;
+    case('D'):
+      cameraHead -= 15;
+      view = makeView();
+      break;
+    case('e'):
+      if (cameraPitch == -45)
+      {
+        cameraPitch = 0;
+      }
+      else {
+        cameraPitch = -45;
+      }
+      view = makeView();
+      break;
+
+    case 'x':
+      m.makeRotationX(toRadians(15));
+      text = "X";
+      break;
+    case 'y':
+      m.makeRotationY(toRadians(15));
+      text = "Y";
+      break;
+    case 'z':
+      m.makeRotationZ(toRadians(15));
+      text = "Z";
+      break;
+    case 'X':
+      m.makeRotationX(toRadians(-15));
+      text = "X<sup>-1</sup>"
+      break;
+    case 'Y':
+      m.makeRotationY(toRadians(-15));
+      text = "Y<sup>-1</sup>"
+      break;
+    case 'Z':
+      m.makeRotationZ(toRadians(-15));
+      text = "Z<sup>-1</sup>"
+      break;
+    case 'o':
+      model.identity();
+      cameraHead = 30;
+      cameraPitch = -45;
+      view = makeView();
+      transformations = "";
+      break;
+    default:
+      return;
   }
-  else {
-    cameraPitch = -45;
-  }
-  view = makeView();
-  break;
-
-	case 'x':
-		m.makeRotationX(toRadians(15));
-		text = "X";
-		break;
-	case 'y':
-		m.makeRotationY(toRadians(15));
-		text = "Y";
-		break;
-	case 'z':
-		m.makeRotationZ(toRadians(15));
-		text = "Z";
-		break;
-	case 'X':
-		m.makeRotationX(toRadians(-15));
-		text = "X<sup>-1</sup>"
-		break;
-	case 'Y':
-		m.makeRotationY(toRadians(-15));
-		text = "Y<sup>-1</sup>"
-		break;
-	case 'Z':
-		m.makeRotationZ(toRadians(-15));
-		text = "Z<sup>-1</sup>"
-		break;
-	case 'o':
-		model.identity();
-    cameraHead = 30;
-    cameraPitch = -45;
-    view = makeView();
-		transformations = "";
-		break;
-		default:
-			return;
-	}
 
   if (ch != 'd' && ch != 'D' && ch != 'e')
   {
-	  if (document.getElementById("checkIntrinsic").checked)
-	  {
-		  // add current text to end of string
-		  transformations += text;
-	  }
-	  else
-	  {
-		  // add to beginning of string
-		  transformations = text + transformations;
-	  }
+    if (document.getElementById("checkIntrinsic").checked)
+    {
+      // add current text to end of string
+      transformations += text;
+    }
+    else
+    {
+      // add to beginning of string
+      transformations = text + transformations;
+    }
   }
 
-	  // update output window
-	  var outputWindow = document.getElementById("displayMatrices");
-	  outputWindow.innerHTML = transformations;
-	  console.log(transformations);
+  // update output window
+  var outputWindow = document.getElementById("displayMatrices");
+  outputWindow.innerHTML = transformations;
+  console.log(transformations);
 
-	  // update current matrix
-	  if (document.getElementById("checkIntrinsic").checked)
-	  {
-		  // multiply on right by m
-		  model.multiply(m);
-	  }
-	  else
-	  {
-		  // multiply on the left by m
-		  model = m.multiply(model);
-	  }
+  // update current matrix
+  if (document.getElementById("checkIntrinsic").checked)
+  {
+    // multiply on right by m
+    model.multiply(m);
+  }
+  else
+  {
+    // multiply on the left by m
+    model = m.multiply(model);
+  }
 }
 
 
@@ -355,7 +327,7 @@ function handleKeyPress(event)
 function draw()
 {
   // clear the framebuffer
-	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BIT);
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BIT);
 
   // bind the shader
   gl.useProgram(shader);
@@ -369,9 +341,9 @@ function draw()
 
   var colorIndex = gl.getAttribLocation(shader, 'a_Color');
   if (colorIndex < 0) {
-	    console.log('Failed to get the storage location of a_');
-	    return;
-	  }
+    console.log('Failed to get the storage location of a_');
+    return;
+  }
 
   // "enable" the a_position attribute
   gl.enableVertexAttribArray(positionIndex);
@@ -432,11 +404,11 @@ function main() {
 // get graphics context
   gl = getGraphicsContext("theCanvas");
 
-   // key handler
+  // key handler
   window.onkeypress = handleKeyPress;
 
   // load and compile the shader pair
-  shader = createShaderProgram(gl, vshaderSource, fshaderSource);
+  shader = createProgram(gl, vshaderSource, fshaderSource);
 
   // load the vertex data into GPU memory
   vertexBuffer = createAndLoadBuffer(vertices);
@@ -467,8 +439,8 @@ function main() {
 
   // define an animation loop
   var animate = function() {
-	draw();
-	// request that the browser calls animate() again "as soon as it can"
+    draw();
+    // request that the browser calls animate() again "as soon as it can"
     requestAnimationFrame(animate);
   };
 
