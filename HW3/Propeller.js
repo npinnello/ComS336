@@ -1,9 +1,9 @@
 //
-// Same as Transformations1.js, but uses the coordinates for the little
-// triangle from homework 2, problem 3.
+// Same as Transformations.js, but we use the Matrix4 type from the
+// three.js utilities instead of explicitly listing 16 numbers to
+// represent a matrix.
+// For example:
 //
-//  Using the three.js Matrix4 type:
-//  -------------------------------
 //   var m = new THREE.Matrix4(); // identity matrix
 //   m.makeTranslate(0.3, 0.0, 0.0);  // make it into a translation matrix
 //   var m2 = new THREE.Matrix4();
@@ -34,19 +34,19 @@ void main()
 `;
 
 
-//Problem 3b implementing new coordinates for rotated triangle
+// A little right triangle in the first quadrant as a test figure
 var numPoints = 3;
 var vertices = new Float32Array([
--0.6, 0.4,
--0.2, 0.4,
--0.2, .3,
+0.0, 0.0,
+0.3, 0.0,
+0.3, 0.2,
 ]
 );
 
 // draw some axes too
 var numAxisPoints = 4;
 var axisVertices = new Float32Array([
--0.9, 0.,
+-0.9, 0.0,
 0.9, 0.0,
 0.0, -0.9,
 0.0, 0.9
@@ -161,16 +161,18 @@ function main() {
   var m = new THREE.Matrix4();
 
   // example: scale by 3 in the y-direction
-  //m = new THREE.Matrix4().makeScale(1, 3, 1);
+  m = new THREE.Matrix4().makeScale(1, 3, 1);
 
   // example: 90 degree counterclockwise rotation
-  //var r = new THREE.Matrix4().makeRotationZ(toRadians(90));
+  var r = new THREE.Matrix4().makeRotationZ(toRadians(90));
 
   // multiply m = m * r (rotate, then scale)
-  //m.multiply(r);
+  m.multiply(r);
 
   // Or, multiply m = r * m (scale, then rotate)
+  //m.multiply(r);
   //m.premultiply(r);
+
 
   // example: translate .3 to the right
   //var t = new THREE.Matrix4().makeTranslation(.3, 0, 0);
