@@ -1,10 +1,4 @@
-//
-// Colored rotating cube. Illustrates perspective projection.
-// See definition of view and projection matrices below.
-// See animation loop for transformations.
-//
-// Code to actually make the cube model has been moved into
-// cs336util.js as function makeCube
+
 
 // vertex shader
 const vshaderSource = `
@@ -79,19 +73,6 @@ var model = new THREE.Matrix4();
 //view matrix
 var view;
 
-//One strategy is to identify a transformation to our camera frame,
-//then invert it.  Here we use the inverse of
-// RotateY(30) * RotateX(-45) * Translate(0, 0, 5)
-// view = new THREE.Matrix4().makeTranslation(0, 0, -5)
-//     .multiply(new THREE.Matrix4().makeRotationX(toRadians(45)))
-//     .multiply(new THREE.Matrix4().makeRotationY(toRadians(-30)));
-
-
-
-// Alternatively, use the LookAt function, specifying the view (eye) point,
-// a point at which to look, and a direction for "up".
-// Approximate view point (1.77, 3.54, 3.06) corresponds to the view
-// matrix described above
 view = createLookAtMatrix(
   new THREE.Vector3(1.77, 3.54, 3.06),   // eye
   new THREE.Vector3(0.0, 0.0, 0.0),      // at - looking at the origin
@@ -126,8 +107,7 @@ var axis = 'y';
 var paused = false;
 
 
-//translate keypress events to strings
-//from http://javascript.info/tutorial/keyboard-events
+
 function getChar(event) {
   if (event.which == null) {
     return String.fromCharCode(event.keyCode) // IE
@@ -316,20 +296,21 @@ function main() {
       // 2) "intrinsic" coordinate axis rotations
       // multiply on *right* by a new one-degree rotation about the chosen axis
       // this always rotates about one of the cube's local coordinate axes
-      //  switch(axis)
-      //  {
-      //  case 'x':
-      //    model.multiply(new THREE.Matrix4().makeRotationX(toRadians(1)));
-      //    break;
-      //  case 'y':
-      //    model.multiply(new THREE.Matrix4().makeRotationY(toRadians(1)));
-      //    break;
-      //  case 'z':
-      //    model.multiply(new THREE.Matrix4().makeRotationZ(toRadians(1)));
-      //    break;
-      //  default:
-      // 	}
-      //
+
+       switch(axis)
+       {
+       case 'x':
+         model.multiply(new THREE.Matrix4().makeRotationX(toRadians(1)));
+         break;
+       case 'y':
+         model.multiply(new THREE.Matrix4().makeRotationY(toRadians(1)));
+         break;
+       case 'z':
+         model.multiply(new THREE.Matrix4().makeRotationZ(toRadians(1)));
+         break;
+       default:
+      	}
+      
 
     }
 
