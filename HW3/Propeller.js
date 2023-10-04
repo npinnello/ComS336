@@ -7,9 +7,6 @@ var vertices = new Float32Array([
   ]
 )
 
-// A few global variables...
-
-// the OpenGL context
 var gl
 
 // handle to a buffer on the GPU
@@ -109,7 +106,7 @@ function main () {
   let r = new THREE.Matrix4()
 
   let theta = 0
-  const radio = 0.75
+  const radio = 0.5
   const increment = toRadians(1)
   let degree = 0
 
@@ -124,7 +121,7 @@ function main () {
     // scale
     let m = new THREE.Matrix4().makeScale(0.5, 3, 1)
     // rotate
-    m.premultiply(r.makeRotationZ(toRadians(degree += 4)))
+    m.premultiply(r.makeRotationZ(toRadians(degree += 5)))
     //
     // translate
     m.premultiply(new THREE.Matrix4().makeTranslation(x, y, 0))
