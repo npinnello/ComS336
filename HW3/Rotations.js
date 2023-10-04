@@ -139,8 +139,7 @@ var projection = createPerspectiveMatrix(30, 1, 1, 10);
 // display string
 var transformations = "";
 
-//translate keypress events to strings
-//from http://javascript.info/tutorial/keyboard-events
+
 function getChar(event) {
   if (event.which == null) {
     return String.fromCharCode(event.keyCode) // IE
@@ -160,10 +159,7 @@ function handleKeyPress(event)
   var text = "I";
   switch(ch)
   {
-    // Experiment #1:
-    // This should un-do RotateX(-45)*RotateX(-45) using ZYZ order
-    // for Euler angles.  Angles are approximate, more accurate
-    // values (obtained analytically) are -35.264, 60.0, and 54.736
+   
 
     case 't':
       m.makeRotationZ(toRadians(-35))
@@ -222,18 +218,18 @@ function handleKeyPress(event)
 //       break;
 //
 // My solution XZY
-//     case 'p':
-//       m.makeRotationX(toRadians(35));
-//       text = "P";
-//       break;
-//     case 'q':
-//       m.makeRotationZ(toRadians(30));
-//       text = "Q";
-//       break;
-//     case 'r':
-//       m.makeRotationY(toRadians(55));
-//       text = "R";
-//       break;
+    case 'p':
+      m.makeRotationX(toRadians(35));
+      text = "P";
+      break;
+    case 'q':
+      m.makeRotationZ(toRadians(30));
+      text = "Q";
+      break;
+    case 'r':
+      m.makeRotationY(toRadians(55));
+      text = "R";
+      break;
 
     case('d'):
       cameraHead += 15;
