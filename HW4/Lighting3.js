@@ -64,6 +64,8 @@ void main()
 
   // reflected vector
   vec3 R = reflect(-L, N);
+  
+  vec3 H = normalize(L + V);
 
   // multiply each lighting constant with the corresponding material constant,
   // then grab the three columns to get the ambient, diffuse, and specular components
@@ -76,7 +78,7 @@ void main()
   float diffuseFactor = max(0.0, dot(L, N));
 
   // specular factor from Phong reflection model
-  float specularFactor = pow(max(0.0, dot(V, R)), shininess);
+  float specularFactor = pow(max(0.0, dot(N, H)), shininess);
 
   // add the components together
   gl_FragColor = specularColor * specularFactor + diffuseColor * diffuseFactor + ambientColor;

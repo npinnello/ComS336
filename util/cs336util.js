@@ -1,6 +1,5 @@
 
 
-
 // Gets the graphics context from the window
 function getGraphicsContext(canvasId) {
   // retrieve <canvas> element
@@ -11,6 +10,7 @@ function getGraphicsContext(canvasId) {
   // so use WebGL 1.0 for now
   //let context = canvas.getContext("webgl2");
   let context = canvas.getContext("webgl");
+  //let context = canvas.getContext("webgl", {alpha:false});
   if (!context) {
     console.log('Failed to get the rendering context for WebGL');
   }
@@ -45,16 +45,50 @@ function loadAndCompileShader(gl, type, source) {
 }
 
 // Helper function compiles two shaders and creates shader program
+function createShaderProgram(gl, vshaderSource, fshaderSource) {
+
+  // Load and compile shader code
+  var vertexShader = loadAndCompileShader(gl, gl.VERTEX_SHADER, vshaderSource);
+  var fragmentShader = loadAndCompileShader(gl, gl.FRAGMENT_SHADER, fshaderSource);
+  if (!vertexShader || !fragmentShader) {
+    return null;
+  }
+
+  // Create a program object
+  var program = gl.createProgram();
+  if (!program) {
+    return null;
+  }
+
+  // Attach the shader objects
+  gl.attachShader(program, vertexShader);
+  gl.attachShader(program, fragmentShader);
+
+  // Link the program object
+  gl.linkProgram(program);
+
+  // Check the result of linking
+  var linked = gl.getProgramParameter(program, gl.LINK_STATUS);
+  if (!linked) {
+    var error = gl.getProgramInfoLog(program);
+    console.log('Failed to link program: ' + error);
+    gl.deleteProgram(program);
+    gl.deleteShader(fragmentShader);
+    gl.deleteShader(vertexShader);
+    return null;
+  }
+  return program;
+}
+
+// NOT USED - THIS ASSUMES THE SHADER CODE IS IN THE HTML FILE
+// Helper function compiles two shaders and creates shader program
+// when shader code is in the html file.  Arguments are the ids of the
+// script tags containing the text of the vertex and fragment shaders.
 function createProgram(gl, vshaderId, fshaderId) {
 
   // extract shader source code from the html
-  try {
-    var vshaderSource = document.getElementById(vshaderId).textContent;
-    var fshaderSource = document.getElementById(fshaderId).textContent;
-  } catch (e) {
-    vshaderSource = vshaderId
-    fshaderSource = fshaderId
-  }
+  var vshaderSource = document.getElementById(vshaderId).textContent;
+  var fshaderSource = document.getElementById(fshaderId).textContent;
 
   // Load and compile shader code
   var vertexShader = loadAndCompileShader(gl, gl.VERTEX_SHADER, vshaderSource);
@@ -241,7 +275,8 @@ function createPerspectiveMatrix (fovy, aspect, near, far) {
 function makeNormalMatrixElements(model, view)
 {
   var n = new THREE.Matrix4().copy(view).multiply(model);
-  n = new THREE.Matrix4().getInverse(n);
+  //n = new THREE.Matrix4().getInverse(n);
+  n.invert();
   n.transpose();
   // take just the upper-left 3x3 submatrix
   n = n.elements;
@@ -267,7 +302,7 @@ function makeCube()
 	0.5, 0.5, -0.5,
 	-0.5, 0.5, -0.5]);
 
-	var rawColors = new Float32Array([
+	 var rawColors = new Float32Array([
 	 // 1.0, 0.0, 0.0, 1.0,  // red
 	 //  1.0, 0.0, 0.0, 1.0,  // red
 	 //  1.0, 0.0, 0.0, 1.0,  // red
@@ -343,9 +378,71 @@ function makeCube()
 	};
 };
 
+// Given an instance of THREE.BufferGeometry, makes
+// a non-indexed version that includes both vertex
+// normals and face normals.
+// Updated version.  three.js no longer uses the Geometry
+// type; everything is BufferGeometry now.
+function getModelData(geom)
+{
+  geom = geom.toNonIndexed();
+
+  // vertices and normals are already Float32Array
+  // in the BufferAttribute, so we can use those
+  // arrays directly
+  let gVerticesAttr = geom.getAttribute("position");
+  let verticesArray = gVerticesAttr.array;
+  let count = verticesArray.length / gVerticesAttr.itemSize;
+
+  // clone the vertex normals array so we can clobber it below
+  let gNormalsAttr = geom.getAttribute("normal");
+  let vertexNormalsArray = new Float32Array(gNormalsAttr.array);
+
+  // For a non-indexed geometry, this computes face normals
+  // (and clobbers the existing normals)
+  // WARNING - this method is marked as deprecated.
+  geom.computeVertexNormals();
+  gNormalsAttr = geom.getAttribute("normal");
+  let normalsArray = gNormalsAttr.array;
+
+  let gTexCoordsAttr = geom.getAttribute("uv");
+  let texCoordArray = gTexCoordsAttr.array;
+
+  // compute the wacky reflected normals for demo purposes
+  let reflectedNormalsArray = [];
+  for (let i = 0; i < count; ++i)
+  {
+    let index = i * 3;
+    vx = vertexNormalsArray[index];
+    vy = vertexNormalsArray[index + 1];
+    vz = vertexNormalsArray[index + 2];
+    nx = normalsArray[index];
+    ny = normalsArray[index + 1];
+    nz = normalsArray[index + 2];
+
+    var dot = vx * nx + vy * ny + vz * nz;
+    rx = 2 * dot * nx - vx;
+    ry = 2 * dot * ny - vy;
+    rz = 2 * dot * nz - vz;
+    reflectedNormalsArray.push(rx);
+    reflectedNormalsArray.push(ry);
+    reflectedNormalsArray.push(rz);
+  }
+
+
+  return {
+    numVertices: count,
+    vertices: verticesArray,
+    normals: normalsArray,
+    vertexNormals: vertexNormalsArray,
+    reflectedNormals: new Float32Array(reflectedNormalsArray),
+    texCoords: texCoordArray
+  };
+}
+
 // given an instance of THREE.Geometry, returns an object
 // containing raw data for vertices and normal vectors.
-function getModelData(geom)
+function getModelDataOldVersion(geom)
 {
 	var verticesArray = [];
 	var normalsArray = [];
@@ -396,12 +493,6 @@ function getModelData(geom)
 			nx = normalsArray[index];
 			ny = normalsArray[index + 1];
 			nz = normalsArray[index + 2];
-//	     nx = vertexNormalsArray[index];
-//	      ny = vertexNormalsArray[index + 1];
-//	      nz = vertexNormalsArray[index + 2];
-//	      vx = normalsArray[index];
-//	      vy = normalsArray[index + 1];
-//	      vz = normalsArray[index + 2];
 
 			var dot = vx * nx + vy * ny + vz * nz;
 			rx = 2 * dot * nx - vx;
