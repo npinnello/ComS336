@@ -6,6 +6,11 @@
 // Edit the light/material matrices in the global variables to experiment.
 // Edit main to choose a model and select face normals or vertex normals.
 //
+// NOTE: if you use a model loaded from an .obj file, you need to:
+// a) be running a local server.  See the resources page for ideas.
+//   (You can also just rely on the previewer in VSCode.)
+// b) Have the OBJLoader.js file available in your workspace along 
+//   with three.js.
 
 // if a filename is given, that will be used by the loader
 // to initialize 'theModel'
@@ -47,7 +52,7 @@ void main()
 
   // transform normal vector into eye coords
   fN = normalMatrix * a_Normal;
-
+  
   // vector from vertex position toward view point
   fV = normalize(-(positionEye).xyz);
 
@@ -196,6 +201,7 @@ var theModel;
 // handle to a buffer on the GPU
 var vertexBuffer;
 var vertexNormalBuffer;
+var faceNormalBuffer;
 
 var axisBuffer;
 var axisColorBuffer;
@@ -206,6 +212,7 @@ var colorShader;
 
 var axis = 'x';
 var paused = false;
+var useFaceNormals = false;
 
 // transformation matrices
 var model = new THREE.Matrix4();
@@ -238,17 +245,20 @@ function handleKeyPress(event)
 
 	switch(ch)
 	{
-	case 's':
+	case 't':
 		shininess += 1;
 		console.log("exponent: " + shininess);
 		break;
-	case 'S':
+	case 'T':
 		shininess -= 1;
 		console.log("exponent: " + shininess);
 		break;
 	case ' ':
 		paused = !paused;
 		break;
+  case 'n':
+    useFaceNormals = !useFaceNormals;
+    break;
 	case 'x':
 		axis = 'x';
 		break;
@@ -299,7 +309,14 @@ function draw()
   // bind buffers for points
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
   gl.vertexAttribPointer(positionIndex, 3, gl.FLOAT, false, 0, 0);
-  gl.bindBuffer(gl.ARRAY_BUFFER, vertexNormalBuffer);
+  if (useFaceNormals)
+  {
+    gl.bindBuffer(gl.ARRAY_BUFFER, faceNormalBuffer);
+  }
+  else
+  {
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexNormalBuffer);
+  }
   gl.vertexAttribPointer(normalIndex, 3, gl.FLOAT, false, 0, 0);
   gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
@@ -330,7 +347,7 @@ function draw()
   gl.uniform1f(loc, shininess);
 
   gl.drawArrays(gl.TRIANGLES, 0, theModel.numVertices);
-
+  
   gl.disableVertexAttribArray(positionIndex);
   gl.disableVertexAttribArray(normalIndex);
 
@@ -354,7 +371,6 @@ function draw()
   // "enable" the a_position attribute
   gl.enableVertexAttribArray(positionIndex);
   gl.enableVertexAttribArray(colorIndex);
-
 
   // draw axes (not transformed by model transformation)
   gl.bindBuffer(gl.ARRAY_BUFFER, axisBuffer);
@@ -386,7 +402,7 @@ function draw()
 
   async function main() {
 
-    theModel = await loadOBJPromise(modelFilename)
+    theModel = await loadOBJPromise(modelFilename);
 
   // *** choose a model
   // basic sphere
@@ -411,11 +427,11 @@ function draw()
     // load the vertex data into GPU memory
     vertexBuffer = createAndLoadBuffer(theModel.vertices);
 
-    // *** choose face normals or vertex normals or wacky normals
-    vertexNormalBuffer = createAndLoadBuffer(theModel.normals);
-    //vertexNormalBuffer = createAndLoadBuffer(theModel.vertexNormals);
-    //vertexNormalBuffer = createAndLoadBuffer(theModel.reflectedNormals);
-
+    // load both face normals AND vertex normals into buffers
+    // so we can select at draw time
+    faceNormalBuffer = createAndLoadBuffer(theModel.normals);
+    vertexNormalBuffer = createAndLoadBuffer(theModel.vertexNormals);
+   
     // buffer for axis vertices
     axisBuffer = createAndLoadBuffer(axisVertices)
 
@@ -465,3 +481,4 @@ function draw()
 
 
 }
+

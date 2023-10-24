@@ -3,6 +3,9 @@
 properties.  Same as Lighting2c otherwise.  Only changes are in
 the fragment shader, which now gets material and light properties
 as 3x3 matrices.  See Lighting3.js.
+
+NOTE: you need the OBJLoader.js file in your workspace along with 
+three.js.
 -->
 
 <!DOCTYPE html>
@@ -18,15 +21,20 @@ as 3x3 matrices.  See Lighting3.js.
     </canvas>
 
 <p>
-Keyboard controls:
+Camera controls:
 <ul style="list-style:none;">
   <li>w, a, s, d - move forward, left, back, right
-  <li>W, A - zoom in, zoom out (change field of view)
+  <li>W, A - zoom in, zoom out (changes field of view)
   <li>r, f - move up, down
   <li>i, j, k, l - look up, turn left, look down, turn right
   <li>O - look at origin
-  <li>I, J, K, L - orbit up, left, down, right
-
+  <li>I, J, K, L - orbit up, left, down, right (must be facing origin!)
+  </ul>
+  <p>
+Model controls:
+<ul>
+  <li>n - toggle face normals or vertex normals
+  <li>t, T - increase/decrease specular exponent  
   <li>SPACE - pause rotation
   <li>y - rotate about y axis
   <li>x - rotate about x axis
@@ -35,97 +43,6 @@ Keyboard controls:
   <li>
 </ul>
 
-<script id="vertexLightingShader" type="x-shader/x-vertex">
-uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
-uniform mat3 normalMatrix;
-uniform vec4 lightPosition;
-
-attribute vec4 a_Position;
-attribute vec3 a_Normal;
-
-varying vec3 fL;
-varying vec3 fN;
-varying vec3 fV;
-void main()
-{
-  // convert position to eye coords
-  vec4 positionEye = view * model * a_Position;
-
-  // convert light position to eye coords
-  vec4 lightEye = view * lightPosition;
-
-  // vector to light
-  fL = (lightEye - positionEye).xyz;
-
-  // transform normal vector into eye coords
-  fN = normalMatrix * a_Normal;
-
-  // vector from vertex position toward view point
-  fV = normalize(-(positionEye).xyz);
-
-  gl_Position = projection * view * model * a_Position;
-}</script>
-
-<script id="fragmentLightingShader" type="x-shader/x-fragment">
-precision mediump float;
-
-uniform mat3 materialProperties;
-uniform mat3 lightProperties;
-uniform float shininess;
-
-varying vec3 fL;
-varying vec3 fN;
-varying vec3 fV;
-void main()
-{
-  // normalize after interpolating
-  vec3 N = normalize(fN);
-  vec3 L = normalize(fL);
-  vec3 V = normalize(fV);
-
-  // reflected vector
-  vec3 R = reflect(-L, N);
-
-  // multiply each lighting constant with the corresponding material constant,
-  // then grab the three columns to get the ambient, diffuse, and specular components
-  mat3 products = matrixCompMult(lightProperties, materialProperties);
-  vec4 ambientColor = vec4(products[0], 1.0);
-  vec4 diffuseColor = vec4(products[1], 1.0);
-  vec4 specularColor = vec4(products[2], 1.0);
-
-  // Lambert's law, clamp negative values to zero
-  float diffuseFactor = max(0.0, dot(L, N));
-
-  // specular factor from Phong reflection model
-  float specularFactor = pow(max(0.0, dot(V, R)), shininess);
-
-  // add the components together
-  gl_FragColor = specularColor * specularFactor + diffuseColor * diffuseFactor + ambientColor;
-  gl_FragColor.a = 1.0;
-}
-</script>
-
-<script id="vertexColorShader" type="x-shader/x-vertex">
-uniform mat4 transform;
-attribute vec4 a_Position;
-attribute vec4 a_Color;
-varying vec4 color;
-void main()
-{
-  color = a_Color;
-  gl_Position = transform * a_Position;
-}
-</script>
-
-<script id="fragmentColorShader" type="x-shader/x-fragment">
-precision mediump float;
-varying vec4 color;
-void main()
-{
-  gl_FragColor = color;
-}
 </script>
   <script src="../three/three.js"></script>
   <script src="../three/OBJLoader.js"></script>
