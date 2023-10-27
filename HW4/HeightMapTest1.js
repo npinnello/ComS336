@@ -208,7 +208,7 @@ function draw()
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
 
   // draw - note use of function drawElements instead of drawArrays
-  gl.drawElements(gl.TRIANGLES, heightMap.numMeshIndices, gl.UNSIGNED_SHORT, 0);
+  gl.drawElements(gl.LINES, heightMap.numWireframeIndices, gl.UNSIGNED_SHORT, 0);
 
   // unbind shader and "disable" the attribute indices
   // (not really necessary when there is only one shader)
@@ -239,7 +239,7 @@ function main() {
   vertexNormalBuffer = createAndLoadBuffer(heightMap.normals);
 
   // buffer for indices
-  indexBuffer = createAndLoadIndexBuffer(heightMap.meshIndices);
+  indexBuffer = createAndLoadIndexBuffer(heightMap.wireframeIndices);
 
   // specify a fill color for clearing the framebuffer
   gl.clearColor(0, 0, 0, 1.0);
