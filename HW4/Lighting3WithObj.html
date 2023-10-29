@@ -19,8 +19,23 @@ three.js.
 	<canvas id="theCanvas" width="600" height="400">
     Please use a browser that supports "canvas"
     </canvas>
-
+  
+  
 <p>
+  <span>Scale: </span>
+  <input id="scaleBox" type="number" value="1.0" />
+  <script id="vertexShader" type="x-shader/x-vertex">
+    precision mediump float;
+    attribute vec4 a_Position;
+    uniform float xShift;
+    uniform float yShift;
+    uniform mat4 scaleMatrix;
+    void main()
+    {
+      vec4 temp = a_Position * scaleMatrix;
+      gl_Position = vec4(temp.x + xShift, temp.y + yShift, temp.zw);
+    }
+  </script>
 Camera controls:
 <ul style="list-style:none;">
   <li>w, a, s, d - move forward, left, back, right
