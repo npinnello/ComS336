@@ -14,8 +14,8 @@
 
 // if a filename is given, that will be used by the loader
 // to initialize 'theModel'
-modelFilename = "../models/teapot.obj";
-//modelFilename = "../models/cube_tex.obj";
+//modelFilename = "../models/teapot.obj";
+modelFilename = "../models/cube_tex.obj";
 //modelFilename = "../models/vw.obj";
 
 // Warning, the .obj file for the bunny is 7 MB
@@ -23,6 +23,13 @@ modelFilename = "../models/teapot.obj";
 
 //modelFilename = "../models/dragon.obj";  // 74 MB
 //modelFilename = "../models/hairball.obj";  // 236 MB
+
+const points = [];
+points.push( new THREE.Vector3( - 10, 0, 0 ) );
+points.push( new THREE.Vector3( 0, 10, 0 ) );
+points.push( new THREE.Vector3( 10, 0, 0 ) );
+
+const geometry = new THREE.BufferGeometry().setFromPoints( points );
 
 
 // vertex shader for lighting
