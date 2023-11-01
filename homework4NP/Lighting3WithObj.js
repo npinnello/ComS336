@@ -391,9 +391,13 @@ function draw()
   transform = new THREE.Matrix4().multiply(projection).multiply(view);
   gl.uniformMatrix4fv(loc, false, transform.elements);
 
+
+
+
+
   // draw axes
   gl.drawArrays(gl.LINES, 0, 6);
-
+  gl.drawArrays(gl.LINES, 0, -6);
   // unbind shader and "disable" the attribute indices
   // (not really necessary when there is only one shader)
   gl.disableVertexAttribArray(positionIndex);
@@ -409,20 +413,21 @@ function draw()
 
   async function main() {
 
-    theModel = await loadOBJPromise(modelFilename);
+    //theModel = await loadOBJPromise(modelFilename);
 
   // *** choose a model
   // basic sphere
   //theModel = getModelData(new THREE.SphereGeometry(1));
 
   // sphere with more faces
-  //theModel = getModelData(new THREE.SphereGeometry(1, 48, 24));
+  theModel = getModelData(new THREE.SphereGeometry(1, 48, 24));
 
   // torus knot
   //theModel = getModelData(new THREE.TorusKnotGeometry(1, .4, 128, 16));
 
     // get graphics context
     gl = getGraphicsContext("theCanvas");
+    
 
     // key handlers
     window.onkeypress = handleKeyPress;
