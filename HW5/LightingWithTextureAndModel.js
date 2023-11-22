@@ -215,6 +215,7 @@ var axisVertices = new Float32Array([
       // sphere with more faces
       //theModel = getModelData(new THREE.SphereGeometry(1, 24, 12));
       theModel = getModelData(new THREE.SphereGeometry(1, 48, 24));
+      var check64ImageFilename = "../images/check64.png";
     
       // torus knot
       //theModel = getModelData(new THREE.TorusKnotGeometry(1, .4, 128, 16));

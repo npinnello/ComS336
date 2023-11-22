@@ -59,6 +59,7 @@ uniform mat3 materialProperties;
 uniform mat3 lightProperties;
 uniform float shininess;
 uniform sampler2D sampler;
+uniform sampler2D sampler2;
 uniform vec3 spotDirectionEye;
 uniform float spotExponent;
 
@@ -76,10 +77,6 @@ void main()
   vec3 LSpot = normalize(fLSpot);
   vec3 V = normalize(fV);
 
-  // spot factor
-  float spotFactor = max(0.0, dot(-LSpot, spotDirectionEye));
-  spotFactor = pow(spotFactor, spotExponent);
-  
   // reflected vector
   vec3 R = reflect(-L, N);
 
@@ -94,13 +91,20 @@ void main()
   vec4 specularLight = vec4(lightProperties[2], 1.0);
 
   // sample from the texture at interpolated texture coordinate
-  vec4 color = texture2D(sampler, fTexCoord);
+  vec4 checkerboard = texture2D(sampler2, fTexCoord);
+  vec4 steve = texture2D(sampler, fTexCoord);
 
-  // (3) blend texture using its alpha value (try this with "steve.png")
-  float m = color.a;
-  ambientSurface = (1.0 - m) * ambientSurface + m * color;
-  diffuseSurface = (1.0 - m) * diffuseSurface + m * color;
-  specularSurface = (1.0 - m) * specularSurface + m * color;
+  ambientSurface = checkerboard;
+  diffuseSurface = checkerboard;
+  specularSurface = checkerboard;
+
+  float angle = max(0.0, dot(LSpot, N));
+  steve = steve * angle;
+
+  float m = steve.a;
+  ambientSurface = (1.0-m) * ambientSurface + m * steve;
+  diffuseSurface = (1.0-m) * diffuseSurface + m * steve;
+  specularSurface = m * steve;
 
   // lighting factors as usual
 
@@ -115,7 +119,6 @@ void main()
   vec4 ambient = ambientLight * ambientSurface;
   vec4 diffuse = diffuseFactor * diffuseLight * diffuseSurface;
   vec4 specular = specularFactor * specularLight * specularSurface;
-
   gl_FragColor = ambient + diffuse + specular;
   gl_FragColor.a = 1.0;
 }
@@ -156,7 +159,7 @@ var modelFilename;
 
 
 // image file for texture
-var imageFilename = "../images/check64.png";
+var check64ImageFilename = "../images/check64.png";
 //var imageFilename = "../images/check64border.png";
 //var imageFilename = "../images/clover.jpg";
 //var imageFilename = "../images/brick.png";
@@ -264,6 +267,7 @@ var shader;
 
 // handle to the texture object on the GPU
 var textureHandle;
+var textureHandle2;
 
 var axis = 'x';
 var paused = false;
@@ -520,6 +524,12 @@ function draw()
   loc = gl.getUniformLocation(lightingShader, "sampler");
   gl.uniform1i(loc, textureUnit);
 
+  var textureUnit2 = 2;
+  gl.activeTexture(gl.TEXTURE0 + textureUnit2);
+  gl.bindTexture(gl.TEXTURE_2D, textureHandle2);
+  loc = gl.getUniformLocation(lightingShader, "sampler2");
+  gl.uniform1i(loc, textureUnit2);
+
   gl.drawArrays(gl.TRIANGLES, 0, theModel.numVertices);
 
   gl.disableVertexAttribArray(positionIndex);
@@ -604,6 +614,7 @@ async function main() {
 
   // load image for texture
   var image = await loadImagePromise(imageFilename);
+  var image2 = await loadImagePromise(check64ImageFilename);
 
     // get graphics context
     gl = getGraphicsContext("theCanvas");
@@ -628,6 +639,7 @@ async function main() {
 
     // ask the GPU to create a texture object
     textureHandle = createAndLoadTexture(image);
+    textureHandle2 = createAndLoadTexture(image2);
 
     // buffer for axis vertices
     axisBuffer = createAndLoadBuffer(axisVertices)
@@ -651,7 +663,11 @@ async function main() {
     gl.bindTexture(gl.TEXTURE_2D, textureHandle);
     gl.generateMipmap(gl.TEXTURE_2D);
 
-    // define an animation loop
+    gl.activeTexture(gl.TEXTURE2);
+    gl.bindTexture(gl.TEXTURE_2D, textureHandle2);
+    gl.generateMipmap(gl.TEXTURE_2D);
+
+  // define an animation loop
     var animate = function() {
   	draw();
 
