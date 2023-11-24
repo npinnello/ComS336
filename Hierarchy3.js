@@ -55,42 +55,41 @@ var vertexNormalBuffer;
 var lightingShader;
 
 var scale = 1.0;
-var bladeSpeed = 0;
 
 // create the objects
-var shaftDummy = new CS336Object();
+var torsoDummy = new CS336Object();
 
-var shaft = new CS336Object(drawCube);
-shaft.setScale(2, 16, 2);
-shaftDummy.addChild(shaft);
+var torso = new CS336Object(drawCube);
+torso.setScale(10, 10, 5);
+torsoDummy.addChild(torso);
 
-var generatorHousingDummy = new CS336Object();
-generatorHousingDummy.setPosition(0, 9, 0);
-shaftDummy.addChild(generatorHousingDummy);
+var shoulderDummy = new CS336Object();
+shoulderDummy.setPosition(6.5, 4, 0);
+torsoDummy.addChild(shoulderDummy);
 
-var generatorHousing = new CS336Object(drawCube);
-generatorHousing.setPosition(0, 0, 0);
-generatorHousing.setScale(3, 2, 6);
-generatorHousingDummy.addChild(generatorHousing);
+var shoulder = new CS336Object(drawCube);
+shoulder.setPosition(0, -2, 0);
+shoulder.setScale(3, 5, 2);
+shoulderDummy.addChild(shoulder);
 
-var rotorHubDummy = new CS336Object();
-rotorHubDummy.setPosition(0, 0, 4);
-generatorHousingDummy.addChild(rotorHubDummy);
+var armDummy = new CS336Object();
+armDummy.setPosition(0, -4.5, 1.0);
+shoulderDummy.addChild(armDummy);
 
-var rotorHub = new CS336Object(drawCube);
-rotorHub.setPosition(0, 0, 0);
-rotorHub.setScale(1, 1, 2);
-rotorHubDummy.addChild(rotorHub);
+var arm = new CS336Object(drawCube);
+arm.setPosition(0, -2.5, -1.0);
+arm.setScale(3, 5, 2);
+armDummy.addChild(arm);
 
-var blade1 = new CS336Object(drawCube);
-blade1.setPosition(-5, 0, 0);
-blade1.setScale(9, 2, 1);
-rotorHubDummy.addChild(blade1);
+var hand = new CS336Object(drawCube);
+hand.setPosition(0, -6.5, -1.0);
+hand.setScale(1, 3, 3);
+armDummy.addChild(hand);
 
-var blade2 = new CS336Object(drawCube);
-blade2.setPosition(5, 0, 0);
-blade2.setScale(9, 2, 1);
-rotorHubDummy.addChild(blade2);
+var head = new CS336Object(drawCube);
+head.setPosition(0, 7, 0);
+head.setScale(4, 4, 4);
+torsoDummy.addChild(head);
 
 
 // view matrix
@@ -123,39 +122,43 @@ function handleKeyPress(event)
 	switch(ch)
 	{
 	case 't':
-	  shaftDummy.rotateY(15);
+	  torsoDummy.rotateY(15);
 		break;
-	case 'y':
-	  shaftDummy.rotateY(-15);
+	case 'T':
+	  torsoDummy.rotateY(-15);
 		break;
-	case 'i':
-	  if(bladeSpeed < 20){
-	    blade1.rotateX(-5);
-	    blade2.rotateX(5);
-	    bladeSpeed += 2;
-	  }
+	case 's':
+	  shoulderDummy.rotateX(-15);
 		break;
-	case 'k':
-	  if(bladeSpeed > -20){
-	    blade1.rotateX(5);
-	    blade2.rotateX(-5);
-	    bladeSpeed -= 2;
-	  }
+	case 'S':
+	  shoulderDummy.rotateX(15);
 		break;
-	case 'j':
-	  generatorHousingDummy.rotateY(15);
- 		break;
+	case 'a':
+	  armDummy.rotateX(-15);
+		break;
+	case 'A':
+	  armDummy.rotateX(15);
+		break;
+	case 'h':
+	  hand.rotateY(15);
+		break;
+	case 'H':
+	  hand.rotateY(-15);
+		break;
 	case 'l':
-	  generatorHousingDummy.rotateY(-15);
+	  head.rotateY(15);
+ 		break;
+	case 'L':
+	  head.rotateY(-15);
  		break;
 
   case 'g':
     scale *= 1.25;
-    shaftDummy.setScale(scale, scale, scale);
+    torsoDummy.setScale(scale, scale, scale);
     break;
-  case 'f':
+  case 'G':
     scale *= 0.8;
-    shaftDummy.setScale(scale, scale, scale);
+    torsoDummy.setScale(scale, scale, scale);
     break;
 	default:
 			return;
@@ -219,7 +222,7 @@ function draw()
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BIT);
 
 	// recursively render everything in the hierarchy
-	shaftDummy.render(new THREE.Matrix4());
+	torsoDummy.render(new THREE.Matrix4());
 }
 
 // entry point when page is loaded
@@ -244,13 +247,12 @@ function main() {
     vertexNormalBuffer = createAndLoadBuffer(cube.normals);
 
   // specify a fill color for clearing the framebuffer
-  gl.clearColor(10, 0, 10, 1.0);
+  gl.clearColor(0.9, 0.9, 0.9, 1.0);
 
   gl.enable(gl.DEPTH_TEST);
 
   // define an animation loop
   var animate = function() {
-	rotorHubDummy.rotateZ(bladeSpeed);
 	draw();
     requestAnimationFrame(animate);
   };

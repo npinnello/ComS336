@@ -385,10 +385,6 @@ function makeCube()
 // type; everything is BufferGeometry now.
 function getModelData(geom)
 {
-  // this method requires indices, so do this before switching
-  // to non-indexed
-  geom.computeTangents();
-
   geom = geom.toNonIndexed();
 
   // vertices and normals are already Float32Array
@@ -411,9 +407,6 @@ function getModelData(geom)
 
   let gTexCoordsAttr = geom.getAttribute("uv");
   let texCoordArray = gTexCoordsAttr.array;
-
-  let gTangentsAttr = geom.getAttribute("tangent");
-  let tangentArray = gTangentsAttr.array;
 
   // compute the wacky reflected normals for demo purposes
   let reflectedNormalsArray = [];
@@ -443,8 +436,7 @@ function getModelData(geom)
     normals: normalsArray,
     vertexNormals: vertexNormalsArray,
     reflectedNormals: new Float32Array(reflectedNormalsArray),
-    texCoords: texCoordArray,
-    tangents: tangentArray
+    texCoords: texCoordArray
   };
 }
 
@@ -670,8 +662,6 @@ function loadOBJPromise(filename)
       theModel.texCoords = geometry.getAttribute('uv').array;
     }
     theModel.normals = new createFaceNormals(theModel);
-
-
 
     doResolve(theModel);
   };

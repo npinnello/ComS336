@@ -14,6 +14,43 @@
 //
 
 // raw data for drawing coordinate axes
+
+// function createStereographicTextureCoords(vertices) {
+//     const texCoords = new Float32Array(vertices.length);
+  
+//     for (let i = 0; i < vertices.length; i += 3) {
+//       const x = vertices[i];
+//       const y = vertices[i + 1];
+//       const z = vertices[i + 2];
+  
+//       // Calculate stereographic projection
+//       const u = x / (1 - z);
+//       const v = y / (1 - z);
+  
+//       // Map to [0, 1] range
+//       texCoords[i] = (u + 1) / 2;
+//       texCoords[i + 1] = (v + 1) / 2;
+//       texCoords[i + 2] = 0; // Assuming 2D texture, set z-coordinate to 0
+//     }
+  
+//     return texCoords;
+//   }
+  
+//   // Example usage with THREE.SphereGeometry
+//   function getModelData(geometry) {
+//     const vertices = new Float32Array(geometry.attributes.position.array);
+//     const theModel = {
+//       vertices: vertices,
+//       texCoords: createStereographicTextureCoords(vertices),
+//     };
+  
+//     return theModel;
+//   }
+  
+
+  
+
+var check64ImageFilename = "../images/check64.png";
 var axisVertices = new Float32Array([
     0.0, 0.0, 0.0,
     1.5, 0.0, 0.0,
@@ -206,7 +243,7 @@ var axisVertices = new Float32Array([
     }
     
     // entry point when page is loaded
-    function main() {
+   async function main() {
     
       // *** choose a model
       // basic sphere
@@ -215,8 +252,11 @@ var axisVertices = new Float32Array([
       // sphere with more faces
       //theModel = getModelData(new THREE.SphereGeometry(1, 24, 12));
       theModel = getModelData(new THREE.SphereGeometry(1, 48, 24));
+      //const theModel = getModelData(sphereGeometry);
+    //console.log(theModel.texCoords);
       var check64ImageFilename = "../images/check64.png";
-    
+      var image2 = await loadImagePromise(check64ImageFilename);
+      var textureHandle2;
       // torus knot
       //theModel = getModelData(new THREE.TorusKnotGeometry(1, .4, 128, 16));
     
@@ -241,13 +281,14 @@ var axisVertices = new Float32Array([
     
         // buffer for axis vertices
         axisBuffer = createAndLoadBuffer(axisVertices)
+        textureHandle2 = createAndLoadTexture(image2);
     
         // buffer for axis colors
         axisColorBuffer = createAndLoadBuffer(axisColors)
     
         // specify a fill color for clearing the framebuffer
-        gl.clearColor(0.0, 0.3, 0.3, 1.0);
-    
+        gl.clearColor(10.0, 0.3, 0.3, 1.0);
+        gl.bindTexture(gl.TEXTURE_2D, textureHandle2);
         gl.enable(gl.DEPTH_TEST);
     
         // define an animation loop
