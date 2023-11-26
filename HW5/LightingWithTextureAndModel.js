@@ -148,6 +148,77 @@ var axisVertices = new Float32Array([
     // code to actually render our geometry
     function draw()
     {
+
+        function createStereographicTextureCoords(vertices) {
+            const texCoords = new Float32Array(vertices.length);
+          
+            for (let i = 0; i < vertices.length; i += 3) {
+              const x = vertices[i];
+              const y = vertices[i + 1];
+              const z = vertices[i + 2];
+          
+              // Calculate stereographic projection
+              const u = x / (1 - z);
+              const v = y / (1 - z);
+          
+              // Map to [0, 1] range
+              texCoords[i] = (u + 1) / 2;
+              texCoords[i + 1] = (v + 1) / 2;
+              texCoords[i + 2] = 0; // Assuming 2D texture, set z-coordinate to 0
+            }
+          
+            return texCoords;
+          }
+          
+          // Example usage with THREE.SphereGeometry
+          function getModelData(geometry) {
+            const vertices = new Float32Array(geometry.attributes.position.array);
+            const theModel = {
+              vertices: vertices,
+              texCoords: createStereographicTextureCoords(vertices),
+            };
+          
+            return theModel;
+          }
+
+          function generateStereographicCoordinates(x, y, z) {
+            // Check if the point is in the southern hemisphere
+            if (y > 0) {
+                console.error("Point is not in the southern hemisphere.");
+                return null;
+            }
+        
+            // Define the north pole
+            const northPole = [0, 1, 0];
+        
+            // Create a vector from the north pole to the given point
+            const vectorToGivenPoint = [x, y, z];
+        
+            // Calculate the intersection point with the plane y = -1
+            const t = (1 + northPole[1]) / vectorToGivenPoint[1];
+            const intersectionPoint = [
+                northPole[0] - t * vectorToGivenPoint[0],
+                -1,
+                northPole[2] - t * vectorToGivenPoint[2]
+            ];
+        
+            // Calculate texture coordinates
+            const u = 0.5 + (Math.atan2(intersectionPoint[2], intersectionPoint[0]) / (2 * Math.PI));
+            const v = 0.5 - (Math.asin(intersectionPoint[1]) / Math.PI);
+        
+            return { u, v };
+        }
+        
+
+        const xCoordinate = 0.5; 
+        const yCoordinate = -0.3; 
+        const zCoordinate = -0.8; 
+        
+        const textureCoordinates = generateStereographicCoordinates(xCoordinate, yCoordinate, zCoordinate);
+        console.log("Texture Coordinates:", textureCoordinates);
+        
+
+
       // clear the framebuffer
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BIT);
     
@@ -252,8 +323,8 @@ var axisVertices = new Float32Array([
       // sphere with more faces
       //theModel = getModelData(new THREE.SphereGeometry(1, 24, 12));
       theModel = getModelData(new THREE.SphereGeometry(1, 48, 24));
-      //const theModel = getModelData(sphereGeometry);
-    //console.log(theModel.texCoords);
+     // const theModel = getModelData(sphereGeometry);
+      console.log(theModel.texCoords);
       var check64ImageFilename = "../images/check64.png";
       var image2 = await loadImagePromise(check64ImageFilename);
       var textureHandle2;
@@ -287,7 +358,7 @@ var axisVertices = new Float32Array([
         axisColorBuffer = createAndLoadBuffer(axisColors)
     
         // specify a fill color for clearing the framebuffer
-        gl.clearColor(10.0, 0.3, 0.3, 1.0);
+        gl.clearColor(5, 5, 0, 1.0);
         gl.bindTexture(gl.TEXTURE_2D, textureHandle2);
         gl.enable(gl.DEPTH_TEST);
     
